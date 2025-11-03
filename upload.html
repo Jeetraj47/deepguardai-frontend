@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Video - DeepGuardAI</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="index.html" class="navbar-brand">
+        🛡️ DeepGuardAI
+      </a>
+      <ul class="navbar-menu">
+        <!-- Will be populated by JavaScript -->
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Upload Form -->
+  <div class="container" style="max-width: 700px; margin-top: 3rem;">
+    <div class="card">
+      <h2 class="card-title">📤 Upload Video for Analysis</h2>
+      <p style="color: var(--text-light); margin-bottom: 2rem;">
+        Upload a video file to detect if it contains deepfake manipulation. Supported formats: MP4, AVI, MOV, WMV, FLV, MKV, WEBM
+      </p>
+
+      <form id="upload-form">
+        <div class="form-group">
+          <label for="video-file">Select Video File</label>
+          <input type="file" id="video-file" class="form-control" accept="video/*" required>
+          <small style="color: var(--text-light); display: block; margin-top: 0.5rem;">
+            Maximum file size: 100MB
+          </small>
+        </div>
+
+        <div id="upload-progress" style="display: none;">
+          <div class="progress">
+            <div class="progress-bar" id="progress-bar" style="width: 0%">0%</div>
+          </div>
+          <p style="text-align: center; color: var(--text-light); margin-top: 0.5rem;" id="upload-status">
+            Uploading...
+          </p>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;" id="upload-btn">
+          Upload and Analyze
+        </button>
+      </form>
+
+      <div style="margin-top: 2rem; padding: 1rem; background-color: var(--light-bg); border-radius: 0.5rem;">
+        <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">💡 Tips for Best Results:</h4>
+        <ul style="color: var(--text-light); margin-left: 1.5rem;">
+          <li>Use videos with clear facial visibility</li>
+          <li>Ensure good lighting conditions</li>
+          <li>Higher resolution videos provide better accuracy</li>
+          <li>Analysis typically takes 2-5 minutes</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chatbot -->
+  <button class="chatbot-button" id="chatbot-button">💬</button>
+  
+  <div class="chatbot-window" id="chatbot-window">
+    <div class="chatbot-header">
+      <h3>AI Assistant</h3>
+      <button class="chatbot-close" id="chatbot-close">×</button>
+    </div>
+    <div class="chatbot-messages" id="chatbot-messages">
+      <div class="message message-bot">
+        Hello! I'm your DeepGuardAI assistant. How can I help you today?
+      </div>
+    </div>
+    <form class="chatbot-input" id="chatbot-form">
+      <input type="text" id="chatbot-input" placeholder="Ask me anything..." required>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Protect page
+    protectPage();
+
+    document.getElementById('upload-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const fileInput = document.getElementById('video-file');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        showAlert('Please select a video file', 'error');
+        return;
+      }
+
+      // Check file size (100MB limit)
+      if (file.size > 100 * 1024 * 1024) {
+        showAlert('File size exceeds 100MB limit', 'error');
+        return;
+      }
+
+      const uploadProgress = document.getElementById('upload-progress');
+      const progressBar = document.getElementById('progress-bar');
+      const uploadStatus = document.getElementById('upload-status');
+      const uploadBtn = document.getElementById('upload-btn');
+
+      uploadProgress.style.display = 'block';
+      uploadBtn.disabled = true;
+
+      const formData = new FormData();
+      formData.append('video', file);
+
+      try {
+        const xhr = new XMLHttpRequest();
+
+        // Progress tracking
+        xhr.upload.addEventListener('progress', (e) => {
+          if (e.lengthComputable) {
+            const percentComplete = (e.loaded / e.total) * 100;
+            progressBar.style.width = percentComplete + '%';
+            progressBar.textContent = Math.round(percentComplete) + '%';
+          }
+        });
+
+        xhr.addEventListener('load', () => {
+          if (xhr.status === 201) {
+            const data = JSON.parse(xhr.responseText);
+            uploadStatus.textContent = 'Upload complete!';
+            showAlert('Video uploaded successfully! Redirecting to dashboard...', 'success');
+            
+            setTimeout(() => {
+              window.location.href = 'dashboard.html';
+            }, 2000);
+          } else {
+            const error = JSON.parse(xhr.responseText);
+            throw new Error(error.message || 'Upload failed');
+          }
+        });
+
+        xhr.addEventListener('error', () => {
+          throw new Error('Network error during upload');
+        });
+
+        xhr.open('POST', `${API_URL}/video/upload`);
+        xhr.setRequestHeader('Authorization', `Bearer ${getToken()}`);
+        xhr.send(formData);
+
+      } catch (error) {
+        showAlert(error.message || 'Upload failed', 'error');
+        uploadProgress.style.display = 'none';
+        uploadBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

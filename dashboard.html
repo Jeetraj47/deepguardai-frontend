@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - DeepGuardAI</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="index.html" class="navbar-brand">
+        🛡️ DeepGuardAI
+      </a>
+      <ul class="navbar-menu">
+        <!-- Will be populated by JavaScript -->
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Dashboard Content -->
+  <div class="container">
+    <h1 style="margin-bottom: 2rem; color: var(--primary-color);">📊 My Dashboard</h1>
+
+    <!-- Quick Actions -->
+    <div class="card">
+      <h2 class="card-title">Quick Actions</h2>
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="upload.html" class="btn btn-primary">📤 Upload New Video</a>
+        <a href="about.html" class="btn btn-secondary">ℹ️ Learn About Deepfakes</a>
+      </div>
+    </div>
+
+    <!-- My Videos -->
+    <div class="card">
+      <h2 class="card-title">My Videos</h2>
+      <div id="videos-container">
+        <div class="spinner"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chatbot -->
+  <button class="chatbot-button" id="chatbot-button">💬</button>
+  
+  <div class="chatbot-window" id="chatbot-window">
+    <div class="chatbot-header">
+      <h3>AI Assistant</h3>
+      <button class="chatbot-close" id="chatbot-close">×</button>
+    </div>
+    <div class="chatbot-messages" id="chatbot-messages">
+      <div class="message message-bot">
+        Hello! I'm your DeepGuardAI assistant. How can I help you today?
+      </div>
+    </div>
+    <form class="chatbot-input" id="chatbot-form">
+      <input type="text" id="chatbot-input" placeholder="Ask me anything..." required>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Protect page
+    protectPage();
+
+    // Load videos
+    async function loadVideos() {
+      const container = document.getElementById('videos-container');
+      
+      try {
+        const data = await apiRequest('/video/my-videos');
+        
+        if (data.videos.length === 0) {
+          container.innerHTML = `
+            <p style="text-align: center; color: var(--text-light); padding: 2rem;">
+              No videos uploaded yet. <a href="upload.html" style="color: var(--primary-color);">Upload your first video</a>
+            </p>
+          `;
+          return;
+        }
+
+        const tableHTML = `
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Filename</th>
+                <th>Status</th>
+                <th>Confidence</th>
+                <th>Uploaded</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${data.videos.map(video => `
+                <tr>
+                  <td>${video.filename}</td>
+                  <td><span class="badge badge-${video.status.toLowerCase()}">${video.status}</span></td>
+                  <td>${video.confidence ? (video.confidence * 100).toFixed(2) + '%' : '-'}</td>
+                  <td>${formatDate(video.uploadedAt)}</td>
+                  <td>
+                    ${video.status === 'Pending' ? 
+                      `<button onclick="analyzeVideo('${video.id}')" class="btn btn-primary" style="padding: 0.5rem 1rem;">Analyze</button>` :
+                      video.status === 'Processing' ?
+                      `<button class="btn" style="padding: 0.5rem 1rem; background: #dbeafe; color: #1e40af;" disabled>Processing...</button>` :
+                      `<a href="result.html?id=${video.id}" class="btn btn-success" style="padding: 0.5rem 1rem;">View Results</a>`
+                    }
+                    <button onclick="deleteVideo('${video.id}')" class="btn btn-danger" style="padding: 0.5rem 1rem; margin-left: 0.5rem;">Delete</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+
+        container.innerHTML = tableHTML;
+
+        // Auto-refresh for processing videos
+        if (data.videos.some(v => v.status === 'Processing')) {
+          setTimeout(loadVideos, 5000);
+        }
+
+      } catch (error) {
+        container.innerHTML = `
+          <div class="alert alert-error">
+            Failed to load videos: ${error.message}
+          </div>
+        `;
+      }
+    }
+
+    async function analyzeVideo(videoId) {
+      try {
+        await apiRequest(`/video/analyze/${videoId}`, {
+          method: 'POST'
+        });
+
+        showAlert('Analysis started! This may take a few minutes.', 'success');
+        loadVideos();
+      } catch (error) {
+        showAlert(error.message || 'Failed to start analysis', 'error');
+      }
+    }
+
+    async function deleteVideo(videoId) {
+      if (!confirm('Are you sure you want to delete this video?')) {
+        return;
+      }
+
+      try {
+        await apiRequest(`/video/${videoId}`, {
+          method: 'DELETE'
+        });
+
+        showAlert('Video deleted successfully', 'success');
+        loadVideos();
+      } catch (error) {
+        showAlert(error.message || 'Failed to delete video', 'error');
+      }
+    }
+
+    // Load videos on page load
+    loadVideos();
+  </script>
+</body>
+</html>

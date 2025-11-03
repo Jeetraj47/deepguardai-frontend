@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeepGuardAI - Deepfake Detection Platform</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="index.html" class="navbar-brand">
+        🛡️ DeepGuardAI
+      </a>
+      <ul class="navbar-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="login.html">Login</a></li>
+        <li><a href="register.html">Register</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>🛡️ Protect Yourself from Deepfakes</h1>
+      <p>Advanced AI-powered deepfake detection to verify video authenticity in seconds</p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="register.html" class="btn btn-lg btn-primary">Get Started Free</a>
+        <a href="about.html" class="btn btn-lg btn-secondary">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <div class="container">
+      <h2 style="text-align: center; margin-bottom: 3rem; font-size: 2.5rem; color: var(--primary-color);">
+        Why Choose DeepGuardAI?
+      </h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>AI-Powered Detection</h3>
+          <p>Advanced CNN + LSTM models analyze facial features and temporal patterns to detect manipulations</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Real-Time Analysis</h3>
+          <p>Get results in minutes with our optimized detection pipeline and cloud infrastructure</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Detailed Reports</h3>
+          <p>Comprehensive PDF reports with confidence scores, anomalies detected, and recommendations</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💬</div>
+          <h3>AI Assistant</h3>
+          <p>24/7 chatbot to answer questions about deepfakes and guide you through the platform</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>Secure & Private</h3>
+          <p>Your videos are encrypted and processed securely. We never share your data</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📈</div>
+          <h3>High Accuracy</h3>
+          <p>Trained on thousands of real and fake videos for reliable detection results</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="container" style="padding: 4rem 2rem;">
+    <h2 style="text-align: center; margin-bottom: 3rem; font-size: 2.5rem; color: var(--primary-color);">
+      How It Works
+    </h2>
+    <div class="features-grid">
+      <div class="card">
+        <h3 style="color: var(--primary-color);">1️⃣ Upload Video</h3>
+        <p>Upload your video file through our secure platform. We support all major video formats.</p>
+      </div>
+      <div class="card">
+        <h3 style="color: var(--primary-color);">2️⃣ AI Analysis</h3>
+        <p>Our AI model analyzes frames, detects faces, and examines spatial and temporal patterns.</p>
+      </div>
+      <div class="card">
+        <h3 style="color: var(--primary-color);">3️⃣ Get Results</h3>
+        <p>Receive a detailed report with authenticity verdict, confidence score, and detected anomalies.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 4rem 2rem; text-align: center; color: white;">
+    <div class="container">
+      <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Ready to Detect Deepfakes?</h2>
+      <p style="font-size: 1.25rem; margin-bottom: 2rem; opacity: 0.9;">
+        Join thousands of users protecting themselves from manipulated media
+      </p>
+      <a href="register.html" class="btn btn-lg" style="background: white; color: #667eea;">
+        Start Free Trial
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2024 DeepGuardAI. All rights reserved.</p>
+    <p>Protecting truth in the age of AI</p>
+  </footer>
+
+  <!-- Chatbot -->
+  <button class="chatbot-button" id="chatbot-button">💬</button>
+  
+  <div class="chatbot-window" id="chatbot-window">
+    <div class="chatbot-header">
+      <h3>AI Assistant</h3>
+      <button class="chatbot-close" id="chatbot-close">×</button>
+    </div>
+    <div class="chatbot-messages" id="chatbot-messages">
+      <div class="message message-bot">
+        Hello! I'm your DeepGuardAI assistant. How can I help you today?
+      </div>
+    </div>
+    <form class="chatbot-input" id="chatbot-form">
+      <input type="text" id="chatbot-input" placeholder="Ask me anything..." required>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
